@@ -1,0 +1,7 @@
+/dist
+/build
+/testvideo
+__pycache__/
+rer
+results/*
+playlist/*
