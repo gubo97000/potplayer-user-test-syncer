@@ -1,9 +1,12 @@
-#Window to set the playlist
+# Window to set the playlist
 import os
 import PySimpleGUI as sg
 from app_types import Context
+from services.commands import start_app
+from pywinauto.timings import wait_until
 
-def playlist_set_window(c:Context):
+
+def playlist_set_window(c: Context):
     """Window to set the playlist"""
     playlists = get_playlist()
     layout = [
@@ -22,17 +25,25 @@ def playlist_set_window(c:Context):
                 sg.Popup("No playlist selected")
                 continue
             for pot in c["pots"]:
-                pot.send_keystrokes("{VK_F4}")
-                pot.send_keystrokes("{VK_F3}")
-            for app in c["apps"]:
+                pot.send_keystrokes("{VK_F4}")  # Stop
+                pot.send_keystrokes("{VK_F3}")  # Open Select Window
+            for app in c["apps"]:  # Open the playlist
                 app["Open"].wait("ready")
                 app["Open"].Edit.set_text(playlists[values["playlist"]])
                 app["Open"].Button.click()
+            for i in range(c["n_istances"]):  
+                wait_until(10, 0.1, lambda: c["pots"][i].element_info.name != "PotPlayer")
+            for i in range(c["n_istances"]): # Pause the apps and send to start
+                c["pots"][i].send_keystrokes("{SPACE}")
+                c["pots"][i].send_keystrokes("{BACKSPACE}")
+
+            # Set playlist variables
+            c["apps_status"] = [True] * c["n_istances"]
             c["current_playlist"] = values["playlist"]
-            with open(playlists[values["playlist"]], "r", encoding='utf-8') as f:
-                c["playlist_len"]=f.read().count("*file")
+            with open(playlists[values["playlist"]], "r", encoding="utf-8") as f:
+                c["playlist_len"] = f.read().count("*file")
             c["results"] = {}
-            c["item_pos"] = 0   
+            c["item_pos"] = 0
             break
     window.close()
     return c

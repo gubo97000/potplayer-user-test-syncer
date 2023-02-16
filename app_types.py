@@ -12,3 +12,4 @@ class Context(TypedDict):
     apps_status: list[bool]
     results: dict[int, int]
     item_pos: int
+    to_test: list[int]

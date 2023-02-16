@@ -1,7 +1,9 @@
 import PySimpleGUI as sg
 
+from app_types import Context
+
 ## FIRST WINDOW
-def setup_window():
+def setup_window(c:Context):
     # ask for the number of instances
     layout = [
         [sg.Text("Number of instances")],
@@ -15,7 +17,9 @@ def setup_window():
         exit()
     if "but" in event[:3]:
         window.close()
-        return int(event[-1])
+        c["n_istances"] = int(event[-1])
+        return c
     
     window.close()
-    return int(values[0])
+    c["n_istances"] = int(values[0])
+    return c

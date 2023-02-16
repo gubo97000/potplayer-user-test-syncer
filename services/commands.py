@@ -30,7 +30,7 @@ def stop_app(c:Context, index=0):
     return c
 
 def start_app(c:Context, index=0):
-    """Starts the selected window after a stop"""
+    """Starts the selected window after a stop, it will start paused"""
     c["pots"][index].send_keystrokes("{SPACE}")
     wait_until(1.5, 0.1, lambda: c["pots"][index].element_info.name != "PotPlayer")
     c["pots"][index].send_keystrokes("{SPACE}")

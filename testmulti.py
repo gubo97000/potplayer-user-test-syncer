@@ -1,34 +1,40 @@
 from pywinauto.application import Application
 from pywinauto.findbestmatch import MatchError
 import PySimpleGUI as sg
-from app_types import Context
+import configparser
 
 from screens.instances import setup_window
 from screens.layout import position_windows
 from screens.playlists import playlist_set_window
 
 from services.commands import *
+from app_types import Context
 
+# Init the configs
+config = configparser.ConfigParser(allow_no_value=True)
+config.read("config.ini")
+
+# Init the context
 c: Context = {
     "apps": [],
     "pots": [],
     "time_edits": [],
     "current_playlist": "",
     "playlist_len": 0,
-    "n_istances": setup_window(),
+    "n_istances": 0,
     "apps_status": [],
     "results": {},
     "item_pos": 0,
+    "to_test": [0,1], # list of the instances to test (TEPORARY)
 }
+c = setup_window(c)
 c["apps_status"] = [True for _ in range(c["n_istances"])]
 
-# FIRST WINDOW
-# c["n_istances"] = setup_window()
 ## INIT THE INSTANCES
 for _ in range(c["n_istances"]):
     c["apps"].append(
         Application().start(
-            cmd_line='"C:\\Program Files\\DAUM\\PotPlayer\\PotPlayerMini64.exe"'
+            cmd_line=config["GENERAL"]["potPlayerPath"]
         )
     )
 for app in c["apps"]:
@@ -37,17 +43,17 @@ for app in c["apps"]:
     app.PotPlayer.send_keystrokes("g")
     c["time_edits"].append(app["Jump to Time/Frame"].Edit)
 
-## LAYOUT WINDOW
+## LAYOUT HELPER WINDOW
 position_windows(c)
 
 
-def updateRadio(c: Context, window: sg.Window):
-    """Update the radio buttons in the main window"""
-    for i in range(c["n_istances"]):
-        window[f"pref{i}"].update(value=False)
-    if c["results"].get(c["item_pos"], None) is None:
-        return
-    window[f"pref{c['results'].get(c['item_pos'])}"].update(value=True)
+# def updateRadio(c: Context, window: sg.Window):
+#     """Update the radio buttons in the main window"""
+#     for i in c["to_test"]:
+#         window[f"pref{i}"].update(value=False)
+#     if c["results"].get(c["item_pos"], None) is None:
+#         return
+#     window[f"pref{c['results'].get(c['item_pos'])}"].update(value=True)
 
 
 def save_results(c: Context):
@@ -107,12 +113,17 @@ def main_window(c: Context):
                 [
                     [
                         sg.R(
-                            f"Display {i}", "RADIO", key=f"pref{i}", enable_events=True, disabled=True
+                            f"Display {i}",
+                            "RADIO",
+                            key=f"pref{i}",
+                            enable_events=True,
+                            disabled=True,
                         )
-                        for i in range(c["n_istances"])
+                        for i in c["to_test"]
                     ],
                 ],
             ),
+
             [
                 sg.Button("Prev", key="prev_item", disabled=True),
                 sg.B("Next", key="next_item", disabled=True),
@@ -166,16 +177,16 @@ def main_window(c: Context):
         if event == "next_item":
             if c["item_pos"] + 1 >= c["playlist_len"]:  # Finish case
                 for i in range(c["n_istances"]):
-                    c=stop_app(c, i)
+                    c = stop_app(c, i)
                 save_results(c)
                 sg.popup("User Test Completed!")
             else:  # Next item case
                 next_item(c)
-                updateRadio(c, window)
+                # updateRadio(c, window)
 
         if event == "prev_item":
             prev_item(c)
-            updateRadio(c, window)
+            # updateRadio(c, window)
 
         if "pref" in event[:4]:
             for k, v in values.items():
@@ -226,14 +237,16 @@ def main_window(c: Context):
             window["playlist_progress"].update(f"{c['item_pos']+1}/{c['playlist_len']}")
         else:
             window["playlist_name"].update("")
+
         # RADIO BUTTONS
         if c["current_playlist"] != "":
-            for i in range(c["n_istances"]):
-                window[f"pref{i}"].update(value=False, disabled=False)
+            for i in c["to_test"]:
+                window[f"pref{i}"].update(value=False, disabled=False) #Set all to false and enable
             if c["results"].get(c["item_pos"], None) is not None:
-                window[f"pref{c['results'].get(c['item_pos'])}"].update(value=True)
+                #If exists a result for the current item, set the radio button to true
+                window[f"pref{c['results'].get(c['item_pos'])}"].update(value=True) 
         else:
-            for i in range(c["n_istances"]):
+            for i in c["to_test"]:
                 window[f"pref{i}"].update(value=False, disabled=True)
         # SYNC BUTTONS
         for i in range(c["n_istances"]):
