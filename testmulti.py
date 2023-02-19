@@ -1,3 +1,5 @@
+import gettext
+import os
 from pywinauto.application import Application
 from pywinauto.findbestmatch import MatchError
 import PySimpleGUI as sg
@@ -13,6 +15,12 @@ from app_types import Context
 # Init the configs
 config = configparser.ConfigParser(allow_no_value=True)
 config.read("config.ini")
+lang = config["GENERAL"]["language"]
+# locale_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'locale')
+# translator = gettext.translation('main', localedir=locale_dir)
+translator = gettext.translation('main', localedir="locale", languages=[lang])
+translator.install()
+_ = translator.gettext
 
 # Init the context
 c: Context = {
@@ -31,7 +39,7 @@ c = setup_window(c)
 c["apps_status"] = [True for _ in range(c["n_istances"])]
 
 ## INIT THE INSTANCES
-for _ in range(c["n_istances"]):
+for __ in range(c["n_istances"]):
     c["apps"].append(
         Application().start(
             cmd_line=config["GENERAL"]["potPlayerPath"]
@@ -42,6 +50,7 @@ for app in c["apps"]:
     c["pots"].append(app.PotPlayer)
     app.PotPlayer.send_keystrokes("g")
     c["time_edits"].append(app["Jump to Time/Frame"].Edit)
+    app["Jump to Time/Frame"].move_window(y=1440)
 
 ## LAYOUT HELPER WINDOW
 position_windows(c)
@@ -64,6 +73,7 @@ def save_results(c: Context):
 
 def main_window(c: Context):
     # playlists = get_playlist()
+    print(_("test"))    
     layout = [
         [
             sg.B("📺", key="layout"),
@@ -73,21 +83,21 @@ def main_window(c: Context):
         ],
         [
             sg.Frame(
-                "📽 Playback Controls",
+                _("📽 Playback Controls"),
                 [
                     [
-                        sg.B("🔙", key="frame_back"),
-                        sg.B("⏪", key="back"),
-                        sg.B("⏯", key="play_pause"),
-                        sg.B("⏩", key="foward"),
-                        sg.B("🔜", key="frame_fow"),
+                        sg.B("⬅", key="frame_back", font=("Arial", 20)),
+                        sg.B("⏪", key="back",font=("Arial", 20)),
+                        sg.B("⏯", key="play_pause",font=("Arial", 20)),
+                        sg.B("⏩", key="foward",font=("Arial", 20)),
+                        sg.B("➡", key="frame_fow",font=("Arial", 20)),
                     ],
                 ],
             ),
         ],
         [
             sg.Frame(
-                "🕰 Sync All Video to",
+               _("🕰 Sync All Video to"),
                 [
                     [
                         sg.B(f"Display {i}", key=f"sync_{i}")
@@ -98,7 +108,7 @@ def main_window(c: Context):
         ],
         [
             sg.Frame(
-                "👓 On/Off Display",
+                _("👓 On/Off Display"),
                 [
                     [
                         sg.B(f"Display {i}", key=f"focus_{i}")
@@ -109,7 +119,7 @@ def main_window(c: Context):
         ],
         [
             sg.Frame(
-                "Which display do you prefer?",
+                _("Which display do you prefer?"),
                 [
                     [
                         sg.R(
@@ -125,13 +135,13 @@ def main_window(c: Context):
             ),
 
             [
-                sg.Button("Prev", key="prev_item", disabled=True),
-                sg.B("Next", key="next_item", disabled=True),
+                sg.Button(_("Prev"), key="prev_item", disabled=True),
+                sg.B(_("Next"), key="next_item", disabled=True),
             ],
         ],
     ]
     window = sg.Window(
-        "SyncPlay", size=(300, 300), resizable=True, return_keyboard_events=True
+        "SyncPlay", size=(400, 400), resizable=True, return_keyboard_events=True
     ).Layout(layout)
     while True:
         event, values = window.read()
@@ -179,7 +189,7 @@ def main_window(c: Context):
                 for i in range(c["n_istances"]):
                     c = stop_app(c, i)
                 save_results(c)
-                sg.popup("User Test Completed!")
+                sg.popup(_("User Test Completed!"))
             else:  # Next item case
                 next_item(c)
                 # updateRadio(c, window)
@@ -219,9 +229,9 @@ def main_window(c: Context):
             window["prev_item"].update(disabled=True)
         # NEXT BUTTON
         if c["item_pos"] + 1 >= c["playlist_len"]:
-            window["next_item"].update("Finish")
+            window["next_item"].update(_("Finish"))
         else:
-            window["next_item"].update("Next")
+            window["next_item"].update(_("Next"))
         # NEXT BUTTON
         if c["results"].get(c["item_pos"], None) is None:
             window["next_item"].update(disabled=True)

@@ -1,0 +1,52 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: 2023-02-17 16:29+0200\n"
+"PO-Revision-Date: 2023-02-17 16:31+0200\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ko_KR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 3.2.2\n"
+"X-Poedit-Basepath: ../../..\n"
+"X-Poedit-SearchPath-0: locale/ko_KR\n"
+"X-Poedit-SearchPath-1: .\n"
+
+#: testmulti.py:75
+msgid "test"
+msgstr ":)"
+
+#: testmulti.py:85
+msgid "📽 Playback Controls"
+msgstr "📽 재생 제어"
+
+#: testmulti.py:99
+msgid "🕰 Sync All Video to"
+msgstr "🕰 모든 비디오 동기화:"
+
+#: testmulti.py:110
+msgid "👓 On/Off Display"
+msgstr "👓 표시 켜기/끄기"
+
+#: testmulti.py:121
+msgid "Which display do you prefer?"
+msgstr "어떤 디스플레이를 선호하십니까?"
+
+#: testmulti.py:137
+msgid "Prev"
+msgstr "이전"
+
+#: testmulti.py:138 testmulti.py:233
+msgid "Next"
+msgstr "다음"
+
+#: testmulti.py:191
+msgid "User Test Completed!"
+msgstr "사용자 테스트 완료!"
+
+#: testmulti.py:231
+msgid "Finish"
+msgstr "마치다"

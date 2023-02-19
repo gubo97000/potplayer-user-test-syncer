@@ -3,7 +3,7 @@ import os
 import PySimpleGUI as sg
 from app_types import Context
 from services.commands import start_app
-from pywinauto.timings import wait_until
+from pywinauto.timings import wait_until, wait_until_passes, always_wait_until
 
 
 def playlist_set_window(c: Context):
@@ -24,18 +24,33 @@ def playlist_set_window(c: Context):
             if values["playlist"] == "":
                 sg.Popup("No playlist selected")
                 continue
+            #Playlist selected
+            with open(playlists[values["playlist"]], "r+", encoding="utf-8") as f:
+                # Delete all the lines that are not *file
+                lines = f.readlines()
+                f.seek(0)
+                f.truncate()
+                f.write("DAUMPLAYLIST\n")
+                lines=list(filter(lambda x: "*file" in x, lines))
+                print(lines)
+                f.write(f"playname={lines[0].replace('1*file*', '')}")
+                for line in lines:
+                    if "*file" in line:
+                        f.write(line)
+                f.flush()
+        
             for pot in c["pots"]:
                 pot.send_keystrokes("{VK_F4}")  # Stop
                 pot.send_keystrokes("{VK_F3}")  # Open Select Window
             for app in c["apps"]:  # Open the playlist
                 app["Open"].wait("ready")
                 app["Open"].Edit.set_text(playlists[values["playlist"]])
-                app["Open"].Button.click()
-            for i in range(c["n_istances"]):  
-                wait_until(10, 0.1, lambda: c["pots"][i].element_info.name != "PotPlayer")
-            for i in range(c["n_istances"]): # Pause the apps and send to start
-                c["pots"][i].send_keystrokes("{SPACE}")
-                c["pots"][i].send_keystrokes("{BACKSPACE}")
+                wait_until(10, 0.1, lambda: app["Open"].Edit.texts()[0] == playlists[values["playlist"]])
+                app["Open"]["Open"].click()
+            check_playlist_loaded(c)
+            for pot in c["pots"]: # Pause the apps and send to start
+                pot.send_keystrokes("{SPACE}") 
+                pot.send_keystrokes("{BACKSPACE}")
 
             # Set playlist variables
             c["apps_status"] = [True] * c["n_istances"]
@@ -57,3 +72,12 @@ def get_playlist():
         if file.endswith(".dpl"):
             playlist[file] = os.path.join(playlist_folder, file)
     return playlist
+
+@always_wait_until(20, 0.1)
+def check_playlist_loaded(c: Context):
+    """Check if all the playlist is loaded"""
+    for pot in c["pots"]:
+        print(pot.element_info.name)
+        if pot.element_info.name == "PotPlayer":
+            return False
+    return True
