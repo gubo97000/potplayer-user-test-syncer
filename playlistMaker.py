@@ -66,10 +66,10 @@ def main_window():
             folder = values['-FOLDER-']
         if event == "create_playlist":
             if folder == "":
-                sg.popup("Select a folder")
+                sg.popup("Select a folder", keep_on_top=True)
                 continue
             if values["-N-"] == "":
-                sg.popup("Insert the number of playlists")
+                sg.popup("Insert the number of playlists", keep_on_top=True)
                 continue
             create_playlist(folder, int(values["-N-"]), values.get("-SEED-", None))
         if folder != "":

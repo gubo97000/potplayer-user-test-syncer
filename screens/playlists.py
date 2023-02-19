@@ -14,7 +14,7 @@ def playlist_set_window(c: Context):
         [sg.Button("Load Playlist", key="load_playlist")],
     ]
     window = sg.Window(
-        "SyncPlay", size=(300, 300), resizable=True, return_keyboard_events=True
+        "SyncPlay", size=(300, 300), resizable=True, return_keyboard_events=True, keep_on_top=True
     ).Layout(layout)
     while True:
         event, values = window.read()
@@ -22,9 +22,10 @@ def playlist_set_window(c: Context):
             break
         if event == "load_playlist":
             if values["playlist"] == "":
-                sg.Popup("No playlist selected")
+                sg.Popup("No playlist selected", keep_on_top=True)
                 continue
             #Playlist selected
+            items=[]
             with open(playlists[values["playlist"]], "r+", encoding="utf-8") as f:
                 # Delete all the lines that are not *file
                 lines = f.readlines()
@@ -32,11 +33,12 @@ def playlist_set_window(c: Context):
                 f.truncate()
                 f.write("DAUMPLAYLIST\n")
                 lines=list(filter(lambda x: "*file" in x, lines))
-                print(lines)
+                # print(lines)
                 f.write(f"playname={lines[0].replace('1*file*', '')}")
                 for line in lines:
                     if "*file" in line:
                         f.write(line)
+                        items += [line.replace("*file*", ";")]
                 f.flush()
         
             for pot in c["pots"]:
@@ -53,6 +55,7 @@ def playlist_set_window(c: Context):
                 pot.send_keystrokes("{BACKSPACE}")
 
             # Set playlist variables
+            c["items"]= items
             c["apps_status"] = [True] * c["n_istances"]
             c["current_playlist"] = values["playlist"]
             with open(playlists[values["playlist"]], "r", encoding="utf-8") as f:

@@ -20,8 +20,8 @@ The following options need to be changed in PotPlayer:
 - [x] Fix playlist set after fist
 - [x] Black screen find best way
 - [x] ON/OFF
-- [ ] Open PLaylist fix
-- [ ] Try to fix the playlists loading????
-- [ ] Hide jump to frame
+- [x] Open PLaylist fix
+- [x] Try to fix the playlists loading????
+- [x] Hide jump to frame
 - [x] Reference display
 - [ ] Perfect sync, maybe with multiprocess? (more a wish that anything else)

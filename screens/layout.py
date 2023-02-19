@@ -19,7 +19,7 @@ def position_windows(c:Context):
         [sg.Button("Fullscreen")],
         [sg.Button("Ok")],
     ]
-    window = sg.Window("SyncPlay", size=(300, 300), resizable=True).Layout(layout)
+    window = sg.Window("SyncPlay", size=(300, 300), resizable=True, keep_on_top=True).Layout(layout)
     while True:
         event, values = window.read()
         if event == sg.WIN_CLOSED or event == "Ok":

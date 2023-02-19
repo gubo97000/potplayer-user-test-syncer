@@ -33,6 +33,7 @@ c: Context = {
     "apps_status": [],
     "results": {},
     "item_pos": 0,
+    "items": [],
     "to_test": [0,1], # list of the instances to test (TEPORARY)
 }
 c = setup_window(c)
@@ -66,10 +67,11 @@ position_windows(c)
 
 
 def save_results(c: Context):
-    """Save the results in a file"""
-    with open(f"./results/res_{c['current_playlist']}.txt", "w") as f:
-        f.write(str(c["results"]))
-
+    """Save the results in a file as csv"""
+    with open(f"./results/res_{c['current_playlist'].split('.')[0]}.csv", "w") as f:
+        for k,v in c["results"].items():
+            name=c['items'][k].split(';')[1].split('\\')[-1].strip()
+            f.write(f"{name},{v}\n")
 
 def main_window(c: Context):
     # playlists = get_playlist()
@@ -80,6 +82,7 @@ def main_window(c: Context):
             sg.Button("📓", key="load_playlist"),
             sg.T("", key="playlist_name"),
             sg.T("", key="playlist_progress"),
+            sg.T("", key="item_playing"),
         ],
         [
             sg.Frame(
@@ -141,7 +144,7 @@ def main_window(c: Context):
         ],
     ]
     window = sg.Window(
-        "SyncPlay", size=(400, 400), resizable=True, return_keyboard_events=True
+        "SyncPlay", size=(400, 400), resizable=True, return_keyboard_events=True, keep_on_top=True
     ).Layout(layout)
     while True:
         event, values = window.read()
@@ -161,7 +164,7 @@ def main_window(c: Context):
             if c["results"] != {}:  # If there are results, ask for confirmation
                 if (
                     sg.popup_yes_no(
-                        "Changing the playlist will reset the results.\n Do you want to continue?"
+                        "Changing the playlist will reset the results.\n Do you want to continue?", keep_on_top=True
                     )
                     == "Yes"
                 ):
@@ -189,7 +192,7 @@ def main_window(c: Context):
                 for i in range(c["n_istances"]):
                     c = stop_app(c, i)
                 save_results(c)
-                sg.popup(_("User Test Completed!"))
+                sg.popup(_("User Test Completed!"), keep_on_top=True)
             else:  # Next item case
                 next_item(c)
                 # updateRadio(c, window)
@@ -237,16 +240,17 @@ def main_window(c: Context):
             window["next_item"].update(disabled=True)
         else:
             window["next_item"].update(disabled=False)
-        # PLAYLIST NAME
+        
+        # PLAYLIST NAME, PROGRESS, ITEM PLAYING
         if c["current_playlist"] != "":
             window["playlist_name"].update(f"Playlist: {c['current_playlist']}")
-        else:
-            window["playlist_name"].update("")
-        # PLAYLIST PROGRESS
-        if c["current_playlist"] != "":
             window["playlist_progress"].update(f"{c['item_pos']+1}/{c['playlist_len']}")
+            name=c['items'][c['item_pos']].split(';')[1].split('\\')[-1]
+            window["item_playing"].update(f"{c['items'][c['item_pos']].split(';')[0]} - {name}")
         else:
             window["playlist_name"].update("")
+            window["playlist_progress"].update("")
+            window["item_playing"].update("")
 
         # RADIO BUTTONS
         if c["current_playlist"] != "":
