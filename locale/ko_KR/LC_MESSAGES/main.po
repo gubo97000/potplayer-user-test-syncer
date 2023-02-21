@@ -15,38 +15,38 @@ msgstr ""
 "X-Poedit-SearchPath-0: locale/ko_KR\n"
 "X-Poedit-SearchPath-1: .\n"
 
-#: testmulti.py:75
+#: main.py:75
 msgid "test"
 msgstr ":)"
 
-#: testmulti.py:85
+#: main.py:85
 msgid "📽 Playback Controls"
 msgstr "📽 재생 제어"
 
-#: testmulti.py:99
+#: main.py:99
 msgid "🕰 Sync All Video to"
 msgstr "🕰 모든 비디오 동기화:"
 
-#: testmulti.py:110
+#: main.py:110
 msgid "👓 On/Off Display"
 msgstr "👓 표시 켜기/끄기"
 
-#: testmulti.py:121
+#: main.py:121
 msgid "Which display do you prefer?"
 msgstr "어떤 디스플레이를 선호하십니까?"
 
-#: testmulti.py:137
+#: main.py:137
 msgid "Prev"
 msgstr "이전"
 
-#: testmulti.py:138 testmulti.py:233
+#: main.py:138 main.py:233
 msgid "Next"
 msgstr "다음"
 
-#: testmulti.py:191
+#: main.py:191
 msgid "User Test Completed!"
 msgstr "사용자 테스트 완료!"
 
-#: testmulti.py:231
+#: main.py:231
 msgid "Finish"
 msgstr "마치다"
