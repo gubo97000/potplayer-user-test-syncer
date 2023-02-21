@@ -15,6 +15,10 @@ The following options need to be changed in PotPlayer:
     <!-- - Playlist
         - - [x] Start instantly to play selected album -->
 
+### Rules for a smooth usage
+- Do not control the playback within potplayer, except for the scrubbing
+- You can turn off an app anytime, but you can turn it on only if the others are paused
+- Send controls with calm, do not spam the buttons
 
 # TODO
 - [x] Fix playlist set after fist
