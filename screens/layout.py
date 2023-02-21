@@ -1,8 +1,11 @@
 import PySimpleGUI as sg
 from app_types import Context
+from utility import build_instaces_names
 
 def position_windows(c:Context):
     """Window to set the position of the windows"""
+    # set the window names
+    i_names = build_instaces_names(c, prefix="App", suffix="", showId=True)
     # ask for the number of instances ans set
     layout = [
         [sg.Text("Move every Window to the desired display")],
@@ -13,12 +16,12 @@ def position_windows(c:Context):
         ],
         [
             sg.Frame(
-                "Outline Apps", [[sg.Button(f"App {i}", key=f"o{i}") for i in range(c["n_istances"])]]
+                "Outline Apps", [[sg.Button(i_names[i], key=f"o{i}") for i in range(c["n_istances"])]]
             )
         ],
         [
             sg.Frame(
-                "Move Apps to 0,0", [[sg.Button(f"App {i}", key=f"m{i}") for i in range(c["n_istances"])]]
+                "Move Apps to 0,0", [[sg.Button(i_names[i], key=f"m{i}") for i in range(c["n_istances"])]]
             )
         ],
         [sg.Button("Fullscreen")],

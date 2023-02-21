@@ -3,6 +3,17 @@ from pywinauto.controls.hwndwrapper import DialogWrapper
 from pywinauto.controls.win32_controls import EditWrapper
 from typing import TypedDict
 
+class PresetInstance(TypedDict):
+    prefix:str
+    showId:bool
+    suffix:str
+    isReference:bool
+class Preset(TypedDict):
+    name:str
+    instances:list[PresetInstance]
+
+class PresetsFile(TypedDict):
+    presets:list[Preset] 
 class Context(TypedDict):
     apps: list[Application]
     pots: list[DialogWrapper]
@@ -14,3 +25,6 @@ class Context(TypedDict):
     item_pos: int
     items: list[str]
     to_test: list[int]
+    preset: Preset
+
+

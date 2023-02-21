@@ -78,7 +78,7 @@ def get_playlist():
 
 @always_wait_until(20, 0.1)
 def check_playlist_loaded(c: Context):
-    """Check if all the playlist is loaded"""
+    """Check if the playlist is loaded in all instances"""
     for pot in c["pots"]:
         print(pot.element_info.name)
         if pot.element_info.name == "PotPlayer":

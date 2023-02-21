@@ -11,6 +11,7 @@ from screens.playlists import playlist_set_window
 
 from services.commands import *
 from app_types import Context
+from utility import build_instaces_names
 
 # Init the configs
 config = configparser.ConfigParser(allow_no_value=True)
@@ -35,8 +36,19 @@ c: Context = {
     "item_pos": 0,
     "items": [],
     "to_test": [0, 1],  # list of the instances to test (TEPORARY)
+    "preset": {},
 }
 c = setup_window(c)
+unloadedPlaylistBlock = False
+if c["preset"]:
+    c["to_test"] = [
+        i
+        for i in range(c["n_istances"])
+        if not c["preset"]["instances"][i]["isReference"]
+    ]
+    unloadedPlaylistBlock = c["preset"]["unloadedPlaylistBlock"]
+
+i_names = build_instaces_names(c)
 c["apps_status"] = [True for _ in range(c["n_istances"])]
 
 ## INIT THE INSTANCES
@@ -78,100 +90,104 @@ def menu_builder(c: Context):
         prev_state = "!"
     menu_def = [
         ["Admin", ["📓 Set Playlist::load_playlist", "---", "📺 Layout::layout"]],
-        ["Edit", [f"{prev_state}👈 Previous Item::prev_item"]],
+        ["Edit", [f"{prev_state}👈 Previous Item::prev_item"]]
+        if c["current_playlist"] != ""
+        else ["Edit", []],
     ]
+
     return menu_def
 
 
 def main_window(c: Context):
     # playlists = get_playlist()
     print(_("test"))
-    menu_elem=sg.Menu(menu_builder(c))
+    menu_elem = sg.Menu(menu_builder(c))
     layout = [
         [menu_elem],
-        # [
-        #     # sg.B("📺", key="layout"),
-        #     # sg.Button("📓", key="load_playlist"),
-        #     sg.T("", key="playlist_name"),
-        #     sg.T("", key="playlist_progress"),
-        #     sg.T("", key="item_playing"),
-        # ],
         [
-            sg.Push(),
-            sg.Frame(
-                _("📽 Playback Controls"),
+            sg.Column(
                 [
                     [
-                        sg.B("⬅", key="frame_back", font=("Arial", 20)),
-                        sg.B("⏪", key="back", font=("Arial", 20)),
-                        sg.B("⏯", key="play_pause", font=("Arial", 20)),
-                        sg.B("⏩", key="foward", font=("Arial", 20)),
-                        sg.B("➡", key="frame_fow", font=("Arial", 20)),
+                        sg.Frame(
+                            _("📽 Playback Controls"),
+                            [
+                                [
+                                    sg.B("⬅", key="frame_back", font=("Arial", 20)),
+                                    sg.B("⏪", key="back", font=("Arial", 20)),
+                                    sg.B("⏯", key="play_pause", font=("Arial", 20)),
+                                    sg.B("⏩", key="foward", font=("Arial", 20)),
+                                    sg.B("➡", key="frame_fow", font=("Arial", 20)),
+                                ],
+                            ],
+                        ),
                     ],
-                ],
-            ),
-            sg.Push(),
-        ],
-        [
-            sg.Push(),
-            sg.Frame(
-                _("🕰 Sync All Video to"),
-                [
                     [
-                        sg.B(f"Display {i}", key=f"sync_{i}")
-                        for i in range(c["n_istances"])
+                        sg.Frame(
+                            _("🕰 Sync All Video to"),
+                            [
+                                [
+                                    sg.B(i_names[i], key=f"sync_{i}")
+                                    for i in range(c["n_istances"])
+                                ],
+                            ],
+                        ),
                     ],
-                ],
-            ),
-            sg.Push(),
-        ],
-        [
-            sg.Push(),
-            sg.Frame(
-                _("👓 On/Off Display"),
-                [
                     [
-                        sg.B(f"Display {i}", key=f"focus_{i}")
-                        for i in range(c["n_istances"])
+                        sg.Frame(
+                            _("👓 On/Off Display"),
+                            [
+                                [
+                                    sg.B(i_names[i], key=f"focus_{i}")
+                                    for i in range(c["n_istances"])
+                                ],
+                            ],
+                        ),
                     ],
-                ],
-            ),
-            sg.Push(),
-        ],
-        [
-            sg.Push(),
-            sg.Frame(
-                _("Which display do you prefer?"),
-                [
                     [
-                        sg.Radio(
-                            f"Display {i}",
-                            "RADIO",
-                            key=f"pref{i}",
-                            enable_events=True,
+                        sg.Frame(
+                            _("Which display do you prefer?"),
+                            [
+                                [
+                                    sg.Radio(
+                                        i_names[i],
+                                        "RADIO",
+                                        key=f"pref{i}",
+                                        enable_events=True,
+                                        disabled=True,
+                                        font=("Arial", 20),
+                                    )
+                                    for i in c["to_test"]
+                                ],
+                            ],
+                        ),
+                    ],
+                    [
+                        sg.B(
+                            _('Next')+"👉",
+                            key="next_item",
                             disabled=True,
-                            font=("Arial", 20),
-                        )
-                        for i in c["to_test"]
+                            font=("Arial", 15),
+                        ),
                     ],
                 ],
-            ),
-            sg.Push(),
+                key="column",
+                visible=not unloadedPlaylistBlock,
+                element_justification="c",
+                justification="c",
+            )
         ],
         [
-            [
-                # sg.Button(_("Prev"), key="prev_item", disabled=True, font=("Arial", 9)),
-                sg.Push(),
-                sg.B(
-                    f"{_('Next')}👉", key="next_item", disabled=True, font=("Arial", 15)
-                ),
-                sg.Push(),
-            ],
+            sg.Text(
+                _("Load a playlist to start"),
+                key="-unloadedPLaylistBlock-",
+                visible=unloadedPlaylistBlock,
+                font=("Arial", 12),
+            )
         ],
     ]
     window = sg.Window(
         "SyncPlay",
-        size=(400, 400),
+        size=(500, 500),
         resizable=True,
         return_keyboard_events=True,
         keep_on_top=True,
@@ -194,7 +210,7 @@ def main_window(c: Context):
             position_windows(c)
 
         if event == "load_playlist":
-            if c["results"] != {}:  # If there are results, ask for confirmation
+            if c["results"] != {} and c["current_playlist"]!="":  # If there are results, ask for confirmation
                 if (
                     sg.popup_yes_no(
                         "Changing the playlist will reset the results.\n Do you want to continue?",
@@ -227,6 +243,7 @@ def main_window(c: Context):
                     c = stop_app(c, i)
                 save_results(c)
                 sg.popup(_("User Test Completed!"), keep_on_top=True)
+                c["current_playlist"] = ""
             else:  # Next item case
                 next_item(c)
                 menu_elem.Update(menu_builder(c))
@@ -258,6 +275,21 @@ def main_window(c: Context):
         #         app.PotPlayer.send_keystrokes(event)
         #     continue
 
+        # PLAYLIST NAME, PROGRESS, ITEM PLAYING
+        if c["current_playlist"] != "":
+            name = c["items"][c["item_pos"]].split(";")[1].split("\\")[-1]
+            window.set_title(
+                f"SP - {c['current_playlist']} [{c['item_pos']+1}/{c['playlist_len']}] {c['items'][c['item_pos']].split(';')[0]} - {name}"
+            )
+            if unloadedPlaylistBlock:
+                window["-unloadedPLaylistBlock-"].update(visible=False)
+                window["column"].update(visible=True)
+        else:
+            window.set_title("SyncPlay")
+            if unloadedPlaylistBlock:
+                window["-unloadedPLaylistBlock-"].update(visible=True)
+                window["column"].update(visible=False)
+
         ## Modify based on varibles change
         for i in range(c["n_istances"]):
             window[f"focus_{i}"].update(f"✅{i}" if c["apps_status"][i] else f"❌{i}")
@@ -272,21 +304,6 @@ def main_window(c: Context):
             window["next_item"].update(disabled=True)
         else:
             window["next_item"].update(disabled=False)
-
-        # PLAYLIST NAME, PROGRESS, ITEM PLAYING
-        if c["current_playlist"] != "":
-            name = c["items"][c["item_pos"]].split(";")[1].split("\\")[-1]
-            window.set_title(
-                f"SP - {c['current_playlist']} [{c['item_pos']+1}/{c['playlist_len']}] {c['items'][c['item_pos']].split(';')[0]} - {name}"
-            )
-            # window["playlist_name"].update(f"Playlist: {c['current_playlist']}")
-            # window["playlist_progress"].update(f"{c['item_pos']+1}/{c['playlist_len']}")
-            # window["item_playing"].update(f"{c['items'][c['item_pos']].split(';')[0]} - {name}")
-        else:
-            window.set_title("SyncPlay")
-            # window["playlist_name"].update("")
-            # window["playlist_progress"].update("")
-            # window["item_playing"].update("")
 
         # RADIO BUTTONS
         if c["current_playlist"] != "":

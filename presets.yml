@@ -1,0 +1,18 @@
+presets:
+  - name: LG 2023
+    unloadedPlaylistBlock: true
+    instances:
+      - prefix: Display
+        showId: true
+        suffix: Left
+        isReference: false
+      
+      - prefix: Display
+        showId: true
+        suffix: Center
+        isReference: true
+
+      - prefix: Display
+        showId: true
+        suffix: Right
+        isReference: false

@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2023-02-17 16:29+0200\n"
-"PO-Revision-Date: 2023-02-17 16:31+0200\n"
+"POT-Creation-Date: 2023-02-21 23:28+0200\n"
+"PO-Revision-Date: 2023-02-21 23:29+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: ko_KR\n"
@@ -15,38 +15,41 @@ msgstr ""
 "X-Poedit-SearchPath-0: locale/ko_KR\n"
 "X-Poedit-SearchPath-1: .\n"
 
-#: main.py:75
+#: main.py:103
 msgid "test"
 msgstr ":)"
 
-#: main.py:85
+#: main.py:112
 msgid "📽 Playback Controls"
 msgstr "📽 재생 제어"
 
-#: main.py:99
+#: main.py:126
 msgid "🕰 Sync All Video to"
 msgstr "🕰 모든 비디오 동기화:"
 
-#: main.py:110
+#: main.py:137
 msgid "👓 On/Off Display"
 msgstr "👓 표시 켜기/끄기"
 
-#: main.py:121
+#: main.py:148
 msgid "Which display do you prefer?"
 msgstr "어떤 디스플레이를 선호하십니까?"
 
-#: main.py:137
-msgid "Prev"
-msgstr "이전"
-
-#: main.py:138 main.py:233
+#: main.py:166
 msgid "Next"
 msgstr "다음"
 
-#: main.py:191
+#: main.py:181
+msgid "Load a playlist to start"
+msgstr "시작하려면 재생목록을 로드하세요"
+
+#: main.py:245
 msgid "User Test Completed!"
 msgstr "사용자 테스트 완료!"
 
-#: main.py:231
+#: main.py:299
 msgid "Finish"
 msgstr "마치다"
+
+#~ msgid "Prev"
+#~ msgstr "이전"
