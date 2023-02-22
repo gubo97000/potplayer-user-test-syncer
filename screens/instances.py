@@ -1,5 +1,6 @@
 import PySimpleGUI as sg
 import yaml
+import sys
 
 from app_types import Context, Preset
 
@@ -31,7 +32,7 @@ def setup_window(c: Context):
     while True:
         event, values = window.read()
         if event == sg.WIN_CLOSED:
-            exit()
+            sys.exit()
         if "but" in event[:3]:
             window.close()
             c["n_istances"] = int(event[-1])
