@@ -2,6 +2,7 @@
 import os
 from time import sleep
 import PySimpleGUI as sg
+from natsort import os_sorted
 from app_types import Context
 from services.commands import start_app
 from pywinauto.timings import wait_until, wait_until_passes, always_wait_until
@@ -11,7 +12,7 @@ def playlist_set_window(c: Context):
     """Window to set the playlist"""
     playlists = get_playlist()
     layout = [
-        [sg.Combo(list(playlists.keys()), key="playlist", readonly=True)],
+        [sg.Combo(os_sorted(list(playlists.keys())), key="playlist", readonly=True)],
         [sg.Button("Load Playlist", key="load_playlist")],
     ]
     window = sg.Window(
