@@ -1,5 +1,6 @@
 # Window to set the playlist
 import os
+from time import sleep
 import PySimpleGUI as sg
 from app_types import Context
 from services.commands import start_app
@@ -50,6 +51,7 @@ def playlist_set_window(c: Context):
                 wait_until(10, 0.1, lambda: app["Open"].Edit.texts()[0] == playlists[values["playlist"]])
                 app["Open"]["Open"].click()
             check_playlist_loaded(c)
+            sleep(1)
             for pot in c["pots"]: # Pause the apps and send to start
                 pot.send_keystrokes("{SPACE}") 
                 pot.send_keystrokes("{BACKSPACE}")
@@ -80,7 +82,8 @@ def get_playlist():
 def check_playlist_loaded(c: Context):
     """Check if the playlist is loaded in all instances"""
     for pot in c["pots"]:
-        print(pot.element_info.name)
         if pot.element_info.name == "PotPlayer":
+            # print("-"+pot.element_info.name)
             return False
+        # print(pot.element_info)
     return True

@@ -29,11 +29,12 @@ def stop_app(c:Context, index=0):
     c["apps_status"][index] = False
     return c
 
-def start_app(c:Context, index=0):
+def start_app(c:Context, index=0, start_paused=False):
     """Starts the selected window after a stop, it will start paused"""
     c["pots"][index].send_keystrokes("{SPACE}")
     wait_until(1.5, 0.1, lambda: c["pots"][index].element_info.name != "PotPlayer")
-    c["pots"][index].send_keystrokes("{SPACE}")
+    if start_paused:
+        c["pots"][index].send_keystrokes("{SPACE}")
     c["apps_status"][index] = True
     return c
 

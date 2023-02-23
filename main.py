@@ -40,6 +40,7 @@ c: Context = {
 }
 c = setup_window(c)
 unloadedPlaylistBlock = False
+## TODO: preset needs to be checked for missing values
 if c["preset"]:
     c["to_test"] = [
         i

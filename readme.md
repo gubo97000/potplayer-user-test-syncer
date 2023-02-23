@@ -15,9 +15,12 @@ The following options need to be changed in PotPlayer:
     <!-- - Playlist
         - - [x] Start instantly to play selected album -->
 
+### Notes
+- By using the render Direct3D 11 the video will not start again if, when paused, the video is moved to the end
+- 
 ### Rules for a smooth usage
 - Do not control the playback within potplayer, except for the scrubbing
-- You can turn off an app anytime, but you can turn it on only if the others are paused
+- You can turn off an app anytime, but you can turn it on only if the others are playing
 - Send controls with calm, do not spam the buttons
 
 # TODO
