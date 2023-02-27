@@ -5,6 +5,9 @@ def get_active_windows(c:Context):
     """Returns the list of active windows"""
     return [i for i, x in enumerate(c["apps_status"]) if x]
 
+def get_app_time(c:Context, index=0):
+    """Returns the time of the selected window"""
+    return c["apps"][index]["Jump to Time/Frame"].SysLink.texts()[0][3:-4]
 
 def sync_apps(c:Context, index=0):
     # Copy the time from the first window

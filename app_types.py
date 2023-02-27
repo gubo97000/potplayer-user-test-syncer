@@ -14,6 +14,11 @@ class Preset(TypedDict):
 
 class PresetsFile(TypedDict):
     presets:list[Preset] 
+
+class ResultsInfo(TypedDict):
+    item_name:str
+    pref_time:int
+
 class Context(TypedDict):
     apps: list[Application]
     pots: list[DialogWrapper]
@@ -22,6 +27,7 @@ class Context(TypedDict):
     n_istances: int
     apps_status: list[bool]
     results: dict[int, int]
+    results_info: dict[int, ResultsInfo]
     item_pos: int
     items: list[str]
     to_test: list[int]

@@ -1,4 +1,5 @@
 # Window to set the playlist
+from collections import defaultdict
 import os
 from time import sleep
 import PySimpleGUI as sg
@@ -64,6 +65,7 @@ def playlist_set_window(c: Context):
             with open(playlists[values["playlist"]], "r", encoding="utf-8") as f:
                 c["playlist_len"] = f.read().count("*file")
             c["results"] = {}
+            c["results_info"] = defaultdict(dict,{})
             c["item_pos"] = 0
             break
     window.close()

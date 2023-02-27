@@ -1,3 +1,4 @@
+from collections import defaultdict
 import gettext
 
 from pywinauto.application import Application
@@ -33,6 +34,7 @@ c: Context = {
     "n_istances": 0,
     "apps_status": [],
     "results": {},
+    "results_info": defaultdict(dict, {}),
     "item_pos": 0,
     "items": [],
     "to_test": [0, 1],  # list of the instances to test (TEPORARY)
@@ -80,7 +82,7 @@ def save_results(c: Context):
     with open(f"./results/res_{c['current_playlist'].split('.')[0]}.csv", "w") as f:
         for k, v in c["results"].items():
             name = c["items"][k].split(";")[1].split("\\")[-1].strip()
-            f.write(f"{name},{v}\n")
+            f.write(f"{name},{v},{c['results_info'][k]['pref_time']}\n")
 
 
 def menu_builder(c: Context):
@@ -257,9 +259,10 @@ def main_window(c: Context):
 
         if "pref" in event[:4]:
             for k, v in values.items():
-                if isinstance(k, str) and "pref" in k[:4] and v is True:
+                if isinstance(k, str) and "pref" in k[:4] and v is True: # Get the radio button that has the true value
                     print(k[-1])
                     c["results"][c["item_pos"]] = int(k[-1])
+                    c["results_info"][c["item_pos"]]["pref_time"] = get_app_time(c, int(k[-1]))
                     break
 
         if "sync" in event[:5]:
